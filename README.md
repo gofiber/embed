@@ -21,7 +21,7 @@ embed.New(config ...embed.Config) func(c *fiber.Ctx)
 | Root | `http.FileSystem` | http.FileSystem to use | `nil` |
 | ErrorHandler | `func(*fiber.Ctx, error)` | Error handler | `404 File not found` |
 
-### pkger example
+### pkger
 
 ```go
 package main
@@ -45,7 +45,7 @@ func main() {
 }
 ```
 
-### packr example
+### packr
 
 ```go
 package main
@@ -54,7 +54,7 @@ import (
   "github.com/gofiber/fiber"
   "github.com/gofiber/embed"
 
-	"github.com/gobuffalo/packr/v2"
+  "github.com/gobuffalo/packr/v2"
 )
 
 func main() {
@@ -69,7 +69,7 @@ func main() {
 }
 ```
 
-### go.rice example
+### go.rice
 
 ```go
 package main
@@ -78,7 +78,7 @@ import (
   "github.com/gofiber/fiber"
   "github.com/gofiber/embed"
 
-	rice "github.com/GeertJohan/go.rice"
+  "github.com/GeertJohan/go.rice"
 )
 
 func main() {
