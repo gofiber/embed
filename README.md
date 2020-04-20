@@ -6,7 +6,7 @@ Special thanks and credits to [Alireza Salary](https://github.com/arsmn)
 ### Install
 ```
 go get -u github.com/gofiber/fiber
-go get -u github.com/gofiber/session
+go get -u github.com/gofiber/embed
 ```
 
 ### Signature
@@ -21,8 +21,7 @@ embed.New(config ...embed.Config) func(c *fiber.Ctx)
 | Root | `http.FileSystem` | http.FileSystem to use | `nil` |
 | ErrorHandler | `func(*fiber.Ctx, error)` | Error handler | `404 File not found` |
 
-### Examples
-### pkger
+### pkger example
 
 ```go
 package main
@@ -47,7 +46,7 @@ func main() {
 }
 ```
 
-### packr
+### packr example
 
 ```go
 package main
@@ -72,7 +71,7 @@ func main() {
 }
 ```
 
-### go.rice
+### go.rice example
 
 ```go
 package main
