@@ -1,6 +1,8 @@
 ### Embed
 FileServer middleware for Fiber
 
+Special thanks and credits to [Alireza Salary](https://github.com/arsmn)
+
 ### Install
 ```
 go get -u github.com/gofiber/fiber
