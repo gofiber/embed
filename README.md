@@ -30,7 +30,7 @@ import (
   "github.com/gofiber/fiber"
   "github.com/gofiber/embed"
 
-	"github.com/markbates/pkger"
+  "github.com/markbates/pkger"
 )
 
 func main() {
