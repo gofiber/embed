@@ -35,11 +35,10 @@ import (
 
 func main() {
 	app := fiber.New()
-	dir := pkger.Dir("/assets")
 
 	app.Use(embed.New(embed.Config{
 		Prefix: "/assets",
-		Root:  dir,
+		Root:   pkger.Dir("/assets"),
 	}))
 
 	app.Listen(8080)
@@ -60,11 +59,10 @@ import (
 
 func main() {
 	app := fiber.New()
-	assetsBox := packr.New("Assets Box", "/assets")
 
 	app.Use(embed.New(embed.Config{
 		Prefix: "/assets",
-		Root:   assetsBox,
+		Root:   packr.New("Assets Box", "/assets"),
 	}))
 
 	app.Listen(8080)
@@ -85,11 +83,10 @@ import (
 
 func main() {
 	app := fiber.New()
-	assetsBox := rice.MustFindBox("assets")
 
 	app.Use(embed.New(embed.Config{
 		Prefix: "/assets",
-		Root:   assetsBox.HTTPBox(),
+		Root:   rice.MustFindBox("assets").HTTPBox(),
 	}))
 
 	app.Listen(8080)
