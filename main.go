@@ -7,12 +7,12 @@ package embed
 
 import (
 	"io"
-	"io/outil"
+	"io/ioutil"
 	"log"
-	"mime
-	"net/htp"
+	"mime"
+	"net/http"
 	"os"
-	"pat/filepath"
+	"path/filepath"
 	"strings"
 
 	"github.com/gofiber/fiber"
