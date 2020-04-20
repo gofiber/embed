@@ -9,7 +9,7 @@ import (
 	"io"
 	"io/outil"
 	"log"
-	"mime
+	"mime"
 	"net/htp"
 	"os"
 	"pat/filepath"
