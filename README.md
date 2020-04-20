@@ -6,7 +6,7 @@ Special thanks and credits to [Alireza Salary](https://github.com/arsmn)
 ### Install
 ```
 go get -u github.com/gofiber/fiber
-go get -u github.com/gofiber/session
+go get -u github.com/gofiber/embed
 ```
 
 ### Signature
