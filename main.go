@@ -43,6 +43,10 @@ func New(config ...Config) func(*fiber.Ctx) {
 		cfg.Prefix = "/" + cfg.Prefix
 	}
 
+	if !strings.HasSuffix(cfg.Prefix, "/") {
+		cfg.Prefix = cfg.Prefix + "/"
+	}
+
 	if cfg.ErrorHandler == nil {
 		cfg.ErrorHandler = func(c *fiber.Ctx, err error) {
 			c.Status(fiber.StatusNotFound)
