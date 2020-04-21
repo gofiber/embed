@@ -62,6 +62,9 @@ func New(config ...Config) func(*fiber.Ctx) {
 			return
 		}
 		p = strings.TrimPrefix(p, cfg.Prefix)
+		if !strings.HasPrefix(p, "/") {
+			p = "/" + p
+		}
 
 		file, err := cfg.Root.Open(filepath.Clean(p))
 		if err != nil {
