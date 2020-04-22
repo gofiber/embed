@@ -92,3 +92,25 @@ func main() {
   app.Listen(8080)
 }
 ```
+
+### fileb0x
+
+```go
+package main
+
+import (
+  "github.com/gofiber/fiber"
+  "github.com/gofiber/embed"
+)
+
+func main() {
+  app := fiber.New()
+
+  app.Use(embed.New(embed.Config{
+    Prefix: "/assets/",
+    Root:   myEmbeddedFiles.HTTP,
+  }))
+
+  app.Listen(8080)
+}
+```
