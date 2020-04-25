@@ -6,12 +6,8 @@
 package embed
 
 import (
-	"io"
-	"io/ioutil"
 	"log"
-	"mime"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
