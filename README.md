@@ -101,6 +101,7 @@ package main
 import (
   "github.com/gofiber/fiber"
   "github.com/gofiber/embed"
+  "<Your go module>/myEmbeddedFiles"
 )
 
 func main() {
