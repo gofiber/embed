@@ -46,32 +46,32 @@ func Test_Embed(t *testing.T) {
 		statusCode  int
 		contentType string
 	}{
-		{
-			name:        "Should be returns status 200 with suitable content-type",
-			fileName:    "index.html",
-			statusCode:  200,
-			contentType: "text/html",
-		},
-		{
-			name:        "Should be returns status 200 with suitable content-type",
-			fileName:    "test.json",
-			statusCode:  200,
-			contentType: "application/json",
-		},
-		{
-			name:        "Should be returns status 200 with suitable content-type",
-			fileName:    "main.css",
-			statusCode:  200,
-			contentType: "text/css",
-		},
+		// {
+		// 	name:        "Should be returns status 200 with suitable content-type",
+		// 	fileName:    "index.html",
+		// 	statusCode:  200,
+		// 	contentType: "text/html",
+		// },
+		// {
+		// 	name:        "Should be returns status 200 with suitable content-type",
+		// 	fileName:    "test.json",
+		// 	statusCode:  200,
+		// 	contentType: "application/json",
+		// },
+		// {
+		// 	name:        "Should be returns status 200 with suitable content-type",
+		// 	fileName:    "main.css",
+		// 	statusCode:  200,
+		// 	contentType: "text/css",
+		// },
+		// {
+		// 	name:       "Should be returns status 404",
+		// 	fileName:   "nofile.js",
+		// 	statusCode: 404,
+		// },
 		{
 			name:       "Should be returns status 404",
-			fileName:   "nofile.js",
-			statusCode: 404,
-		},
-		{
-			name:       "Should be returns status 404",
-			fileName:   "nofile",
+			fileName:   "nofile/",
 			statusCode: 404,
 		},
 	}

@@ -17,6 +17,7 @@ import (
 type Config struct {
 	Root         http.FileSystem
 	ErrorHandler func(*fiber.Ctx, error)
+	Index        string
 }
 
 func New(config ...Config) func(*fiber.Ctx) {
@@ -37,6 +38,10 @@ func New(config ...Config) func(*fiber.Ctx) {
 		}
 	}
 
+	if cfg.Index == "" {
+		cfg.Index = "index.html"
+	}
+
 	var prefix string
 	return func(c *fiber.Ctx) {
 
@@ -47,6 +52,9 @@ func New(config ...Config) func(*fiber.Ctx) {
 
 		// Strip prefix
 		path := strings.TrimPrefix(c.Path(), prefix)
+		if !strings.HasPrefix(path, "/") {
+			path = "/" + path
+		}
 
 		file, err := cfg.Root.Open(filepath.Clean(path))
 		if err != nil {
@@ -63,6 +71,23 @@ func New(config ...Config) func(*fiber.Ctx) {
 			cfg.ErrorHandler(c, err)
 			return
 		}
+
+		if stat.IsDir() {
+			index, err := cfg.Root.Open(path + "/" + cfg.Index)
+			if err != nil {
+				cfg.ErrorHandler(c, err)
+				return
+			}
+			indexStat, err := index.Stat()
+			if err != nil {
+				cfg.ErrorHandler(c, err)
+				return
+			}
+
+			file = index
+			stat = indexStat
+		}
+
 		contentLength := int(stat.Size())
 
 		// Set Content Type header
