@@ -64,6 +64,10 @@ func New(config ...Config) func(*fiber.Ctx) {
 
 		file, err := cfg.Root.Open(filepath.Clean(p))
 		if err != nil {
+			if err.Error() == "file does not exist" {
+				c.Next()
+				return
+			}
 			cfg.ErrorHandler(c, err)
 			return
 		}
