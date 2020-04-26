@@ -15,7 +15,6 @@ import (
 )
 
 type Config struct {
-	Prefix       string
 	Root         http.FileSystem
 	ErrorHandler func(*fiber.Ctx, error)
 }
@@ -28,19 +27,7 @@ func New(config ...Config) func(*fiber.Ctx) {
 	}
 
 	if cfg.Root == nil {
-		log.Fatal("Fiber: FileServer middleware requires root")
-	}
-
-	if cfg.Prefix == "" {
-		cfg.Prefix = "/"
-	}
-
-	if !strings.HasPrefix(cfg.Prefix, "/") {
-		cfg.Prefix = "/" + cfg.Prefix
-	}
-
-	if !strings.HasSuffix(cfg.Prefix, "/") {
-		cfg.Prefix = cfg.Prefix + "/"
+		log.Fatal("Fiber: Embed middleware requires root")
 	}
 
 	if cfg.ErrorHandler == nil {
@@ -50,19 +37,18 @@ func New(config ...Config) func(*fiber.Ctx) {
 		}
 	}
 
+	var prefix string
 	return func(c *fiber.Ctx) {
-		p := c.Path()
 
-		if !strings.HasPrefix(p, cfg.Prefix) {
-			c.Next()
-			return
-		}
-		p = strings.TrimPrefix(p, cfg.Prefix)
-		if !strings.HasPrefix(p, "/") {
-			p = "/" + p
+		// Set prefix
+		if len(prefix) == 0 {
+			prefix = c.Route().Path
 		}
 
-		file, err := cfg.Root.Open(filepath.Clean(p))
+		// Strip prefix
+		path := strings.TrimPrefix(c.Path(), prefix)
+
+		file, err := cfg.Root.Open(filepath.Clean(path))
 		if err != nil {
 			if err.Error() == "file does not exist" {
 				c.Next()
@@ -105,6 +91,5 @@ func getFileExtension(path string) string {
 	if n < 0 {
 		return ""
 	}
-
 	return path[n:]
 }

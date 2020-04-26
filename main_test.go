@@ -20,21 +20,18 @@ func Test_Embed(t *testing.T) {
 	app := *fiber.New()
 
 	// pkger
-	app.Use(New(Config{
-		Prefix: "/pkger/",
-		Root:   pkger.Dir("/testdata"),
+	app.Use("/pkger", New(Config{
+		Root: pkger.Dir("/testdata"),
 	}))
 
 	// packr
-	app.Use(New(Config{
-		Prefix: "/packr/",
-		Root:   packr.New("box", "./testdata"),
+	app.Use("/packr", New(Config{
+		Root: packr.New("box", "./testdata"),
 	}))
 
 	// go.rice
-	app.Use(New(Config{
-		Prefix: "/rice/",
-		Root:   rice.MustFindBox("./testdata").HTTPBox(),
+	app.Use("/rice", New(Config{
+		Root: rice.MustFindBox("./testdata").HTTPBox(),
 	}))
 
 	app.Get("/", func(c *fiber.Ctx) {
