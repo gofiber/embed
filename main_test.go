@@ -53,7 +53,7 @@ func Test_Embed(t *testing.T) {
 			name:        "Should be returns status 200 with suitable content-type",
 			fileName:    "index.html",
 			statusCode:  200,
-			contentType: "text/html; charset=utf-8",
+			contentType: "text/html",
 		},
 		{
 			name:        "Should be returns status 200 with suitable content-type",
@@ -65,19 +65,17 @@ func Test_Embed(t *testing.T) {
 			name:        "Should be returns status 200 with suitable content-type",
 			fileName:    "main.css",
 			statusCode:  200,
-			contentType: "text/css; charset=utf-8",
+			contentType: "text/css",
 		},
 		{
-			name:        "Should be returns status 404",
-			fileName:    "nofile.js",
-			statusCode:  404,
-			contentType: "text/plain; charset=utf-8",
+			name:       "Should be returns status 404",
+			fileName:   "nofile.js",
+			statusCode: 404,
 		},
 		{
-			name:        "Should be returns status 404",
-			fileName:    "nofile",
-			statusCode:  404,
-			contentType: "text/plain; charset=utf-8",
+			name:       "Should be returns status 404",
+			fileName:   "nofile",
+			statusCode: 404,
 		},
 	}
 
@@ -95,9 +93,11 @@ func Test_Embed(t *testing.T) {
 					t.Fatalf(`%s: StatusCode: got %v - expected %v`, t.Name(), resp.StatusCode, tt.statusCode)
 				}
 
-				ct := resp.Header.Get("Content-Type")
-				if ct != tt.contentType {
-					t.Fatalf(`%s: Content-Type: got %s - expected %s`, t.Name(), ct, tt.contentType)
+				if tt.contentType != "" {
+					ct := resp.Header.Get("Content-Type")
+					if ct != tt.contentType {
+						t.Fatalf(`%s: Content-Type: got %s - expected %s`, t.Name(), ct, tt.contentType)
+					}
 				}
 			})
 		}
