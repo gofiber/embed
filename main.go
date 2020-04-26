@@ -6,12 +6,8 @@
 package embed
 
 import (
-	"io"
-	"io/ioutil"
 	"log"
-	"mime"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -79,13 +75,9 @@ func New(config ...Config) func(*fiber.Ctx) {
 		}
 		contentLength := int(stat.Size())
 
-		contentType, err := detectContentType(file, stat)
-		if err != nil {
-			cfg.ErrorHandler(c, err)
-			return
-		}
+		// Set Content Type header
+		c.Type(getFileExtension(stat.Name()))
 
-		c.Fasthttp.SetContentType(contentType)
 		if c.Method() == fiber.MethodGet {
 			c.Fasthttp.SetBodyStream(file, contentLength)
 			return
@@ -104,20 +96,6 @@ func New(config ...Config) func(*fiber.Ctx) {
 	}
 }
 
-func detectContentType(f http.File, fileInfo os.FileInfo) (string, error) {
-	ext := getFileExtension(fileInfo.Name())
-	contentType := mime.TypeByExtension(ext)
-	if len(contentType) == 0 {
-		data, err := readFileHeader(f)
-		if err != nil {
-			return "", err
-		}
-		contentType = http.DetectContentType(data)
-	}
-
-	return contentType, nil
-}
-
 func getFileExtension(path string) string {
 	n := strings.LastIndexByte(path, '.')
 	if n < 0 {
@@ -125,18 +103,4 @@ func getFileExtension(path string) string {
 	}
 
 	return path[n:]
-}
-
-func readFileHeader(f http.File) ([]byte, error) {
-	r := io.Reader(f)
-	lr := &io.LimitedReader{
-		R: r,
-		N: 512,
-	}
-	data, err := ioutil.ReadAll(lr)
-	if _, err := f.Seek(0, 0); err != nil {
-		return nil, err
-	}
-
-	return data, err
 }
