@@ -38,8 +38,7 @@ func New(config ...Config) func(*fiber.Ctx) {
 				c.Next()
 				return
 			}
-			c.Status(fiber.StatusNotFound)
-			c.SendString("File not found")
+			c.Status(fiber.StatusInternalServerError)
 		}
 	}
 

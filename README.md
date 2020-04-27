@@ -19,7 +19,7 @@ embed.New(config ...embed.Config) func(c *fiber.Ctx)
 | :--- | :--- | :--- | :--- |
 | Index | `string` | Index file name | `index.html` |
 | Root | `http.FileSystem` | http.FileSystem to use | `nil` |
-| ErrorHandler | `func(*fiber.Ctx, error)` | Error handler | `404 File not found` |
+| ErrorHandler | `func(*fiber.Ctx, error)` | Error handler | `InternalServerError` |
 
 ### pkger
 
