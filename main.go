@@ -8,6 +8,7 @@ package embed
 import (
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -33,6 +34,10 @@ func New(config ...Config) func(*fiber.Ctx) {
 
 	if cfg.ErrorHandler == nil {
 		cfg.ErrorHandler = func(c *fiber.Ctx, err error) {
+			if os.IsNotExist(err) {
+				c.Next()
+				return
+			}
 			c.Status(fiber.StatusNotFound)
 			c.SendString("File not found")
 		}
@@ -58,10 +63,6 @@ func New(config ...Config) func(*fiber.Ctx) {
 
 		file, err := cfg.Root.Open(filepath.Clean(path))
 		if err != nil {
-			if err.Error() == "file does not exist" {
-				c.Next()
-				return
-			}
 			cfg.ErrorHandler(c, err)
 			return
 		}
