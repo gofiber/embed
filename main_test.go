@@ -6,100 +6,89 @@
 package embed
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
-	rice "github.com/GeertJohan/go.rice"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/gofiber/fiber"
-	"github.com/markbates/pkger"
 )
 
 func Test_Embed(t *testing.T) {
 	app := *fiber.New()
 
-	// pkger
-	app.Use(New(Config{
-		Prefix: "/pkger/",
-		Root:   pkger.Dir("/testdata"),
-	}))
-
-	// packr
-	app.Use(New(Config{
-		Prefix: "/packr/",
-		Root:   packr.New("box", "./testdata"),
-	}))
-
-	// go.rice
-	app.Use(New(Config{
-		Prefix: "/rice/",
-		Root:   rice.MustFindBox("./testdata").HTTPBox(),
+	app.Use("/test", New(Config{
+		Root: http.Dir("./testdata"),
 	}))
 
 	app.Get("/", func(c *fiber.Ctx) {
 		c.SendString("Hello, World!")
 	})
 
-	embedders := []string{"pkger", "packr", "rice"}
-
 	tests := []struct {
 		name        string
-		fileName    string
+		url         string
 		statusCode  int
 		contentType string
 	}{
 		{
 			name:        "Should be returns status 200 with suitable content-type",
-			fileName:    "index.html",
+			url:         "/test/index.html",
 			statusCode:  200,
 			contentType: "text/html",
 		},
 		{
 			name:        "Should be returns status 200 with suitable content-type",
-			fileName:    "test.json",
+			url:         "/test",
+			statusCode:  200,
+			contentType: "text/html",
+		},
+		{
+			name:        "Should be returns status 200 with suitable content-type",
+			url:         "/test/test.json",
 			statusCode:  200,
 			contentType: "application/json",
 		},
 		{
 			name:        "Should be returns status 200 with suitable content-type",
-			fileName:    "main.css",
+			url:         "/test/main.css",
 			statusCode:  200,
 			contentType: "text/css",
 		},
 		{
 			name:       "Should be returns status 404",
-			fileName:   "nofile.js",
+			url:        "/test/nofile.js",
 			statusCode: 404,
 		},
 		{
 			name:       "Should be returns status 404",
-			fileName:   "nofile",
+			url:        "/test/nofile",
 			statusCode: 404,
+		},
+		{
+			name:        "Should be returns status 200",
+			url:         "/",
+			statusCode:  200,
+			contentType: "text/plain; charset=utf-8",
 		},
 	}
 
-	for _, embedder := range embedders {
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				url := fmt.Sprintf("/%s/%s", embedder, tt.fileName)
-				req, _ := http.NewRequest("GET", url, nil)
-				resp, err := app.Test(req)
-				if err != nil {
-					t.Fatalf(`%s: %s`, t.Name(), err)
-				}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, _ := http.NewRequest("GET", tt.url, nil)
+			resp, err := app.Test(req)
+			if err != nil {
+				t.Fatalf(`%s: %s`, t.Name(), err)
+			}
 
-				if resp.StatusCode != tt.statusCode {
-					t.Fatalf(`%s: StatusCode: got %v - expected %v`, t.Name(), resp.StatusCode, tt.statusCode)
-				}
+			if resp.StatusCode != tt.statusCode {
+				t.Fatalf(`%s: StatusCode: got %v - expected %v`, t.Name(), resp.StatusCode, tt.statusCode)
+			}
 
-				if tt.contentType != "" {
-					ct := resp.Header.Get("Content-Type")
-					if ct != tt.contentType {
-						t.Fatalf(`%s: Content-Type: got %s - expected %s`, t.Name(), ct, tt.contentType)
-					}
+			if tt.contentType != "" {
+				ct := resp.Header.Get("Content-Type")
+				if ct != tt.contentType {
+					t.Fatalf(`%s: Content-Type: got %s - expected %s`, t.Name(), ct, tt.contentType)
 				}
-			})
-		}
+			}
+		})
 	}
 }

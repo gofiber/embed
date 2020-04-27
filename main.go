@@ -8,6 +8,7 @@ package embed
 import (
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -15,9 +16,9 @@ import (
 )
 
 type Config struct {
-	Prefix       string
 	Root         http.FileSystem
 	ErrorHandler func(*fiber.Ctx, error)
+	Index        string
 }
 
 func New(config ...Config) func(*fiber.Ctx) {
@@ -28,46 +29,39 @@ func New(config ...Config) func(*fiber.Ctx) {
 	}
 
 	if cfg.Root == nil {
-		log.Fatal("Fiber: FileServer middleware requires root")
-	}
-
-	if cfg.Prefix == "" {
-		cfg.Prefix = "/"
-	}
-
-	if !strings.HasPrefix(cfg.Prefix, "/") {
-		cfg.Prefix = "/" + cfg.Prefix
-	}
-
-	if !strings.HasSuffix(cfg.Prefix, "/") {
-		cfg.Prefix = cfg.Prefix + "/"
+		log.Fatal("Fiber: Embed middleware requires root")
 	}
 
 	if cfg.ErrorHandler == nil {
 		cfg.ErrorHandler = func(c *fiber.Ctx, err error) {
-			c.Status(fiber.StatusNotFound)
-			c.SendString("File not found")
-		}
-	}
-
-	return func(c *fiber.Ctx) {
-		p := c.Path()
-
-		if !strings.HasPrefix(p, cfg.Prefix) {
-			c.Next()
-			return
-		}
-		p = strings.TrimPrefix(p, cfg.Prefix)
-		if !strings.HasPrefix(p, "/") {
-			p = "/" + p
-		}
-
-		file, err := cfg.Root.Open(filepath.Clean(p))
-		if err != nil {
-			if err.Error() == "file does not exist" {
+			if os.IsNotExist(err) {
 				c.Next()
 				return
 			}
+			c.Status(fiber.StatusInternalServerError)
+		}
+	}
+
+	if cfg.Index == "" {
+		cfg.Index = "index.html"
+	}
+
+	var prefix string
+	return func(c *fiber.Ctx) {
+
+		// Set prefix
+		if len(prefix) == 0 {
+			prefix = c.Route().Path
+		}
+
+		// Strip prefix
+		path := strings.TrimPrefix(c.Path(), prefix)
+		if !strings.HasPrefix(path, "/") {
+			path = "/" + path
+		}
+
+		file, err := cfg.Root.Open(filepath.Clean(path))
+		if err != nil {
 			cfg.ErrorHandler(c, err)
 			return
 		}
@@ -77,6 +71,23 @@ func New(config ...Config) func(*fiber.Ctx) {
 			cfg.ErrorHandler(c, err)
 			return
 		}
+
+		if stat.IsDir() {
+			index, err := cfg.Root.Open(path + "/" + cfg.Index)
+			if err != nil {
+				cfg.ErrorHandler(c, err)
+				return
+			}
+			indexStat, err := index.Stat()
+			if err != nil {
+				cfg.ErrorHandler(c, err)
+				return
+			}
+
+			file = index
+			stat = indexStat
+		}
+
 		contentLength := int(stat.Size())
 
 		// Set Content Type header
@@ -105,6 +116,5 @@ func getFileExtension(path string) string {
 	if n < 0 {
 		return ""
 	}
-
 	return path[n:]
 }
