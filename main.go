@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/gofiber/fiber"
@@ -21,6 +20,7 @@ type Config struct {
 	Index        string
 }
 
+// New returns
 func New(config ...Config) func(*fiber.Ctx) {
 	var cfg Config
 
@@ -60,7 +60,7 @@ func New(config ...Config) func(*fiber.Ctx) {
 			path = "/" + path
 		}
 
-		file, err := cfg.Root.Open(filepath.Clean(path))
+		file, err := cfg.Root.Open(path)
 		if err != nil {
 			cfg.ErrorHandler(c, err)
 			return
