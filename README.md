@@ -18,6 +18,7 @@ embed.New(config ...embed.Config) func(c *fiber.Ctx)
 | Property | Type | Description | Default |
 | :--- | :--- | :--- | :--- |
 | Index | `string` | Index file name | `index.html` |
+| Browse | `bool` | Enable directory browsing | `false` |
 | Root | `http.FileSystem` | http.FileSystem to use | `nil` |
 | ErrorHandler | `func(*fiber.Ctx, error)` | Error handler | `InternalServerError` |
 

@@ -19,6 +19,11 @@ func Test_Embed(t *testing.T) {
 		Root: http.Dir("./testdata"),
 	}))
 
+	app.Use("/dir", New(Config{
+		Root:   http.Dir("./testdata"),
+		Browse: true,
+	}))
+
 	app.Get("/", func(c *fiber.Ctx) {
 		c.SendString("Hello, World!")
 	})
@@ -68,6 +73,23 @@ func Test_Embed(t *testing.T) {
 			url:         "/",
 			statusCode:  200,
 			contentType: "text/plain; charset=utf-8",
+		},
+		{
+			name:       "Should be returns status 403",
+			url:        "/test/inner",
+			statusCode: 403,
+		},
+		{
+			name:        "Should list the directory contents",
+			url:         "/dir/inner",
+			statusCode:  200,
+			contentType: "text/html",
+		},
+		{
+			name:        "Should be returns status 200",
+			url:         "/dir/inner/fiber.png",
+			statusCode:  200,
+			contentType: "image/png",
 		},
 	}
 
