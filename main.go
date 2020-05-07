@@ -38,10 +38,10 @@ type Config struct {
 	Browse bool
 }
 
-// New returns
+// New returns an embed middleware for serving files
 func New(config ...Config) func(*fiber.Ctx) {
-	var cfg Config
 
+	var cfg Config
 	if len(config) > 0 {
 		cfg = config[0]
 	}
@@ -98,6 +98,7 @@ func New(config ...Config) func(*fiber.Ctx) {
 			return
 		}
 
+		// Serve index if path is directory
 		if stat.IsDir() {
 			indexPath := strings.TrimSuffix(path, "/") + cfg.Index
 			index, err := cfg.Root.Open(indexPath)
@@ -110,6 +111,7 @@ func New(config ...Config) func(*fiber.Ctx) {
 			}
 		}
 
+		// Browse directory if no index found and browsing is enabled
 		if stat.IsDir() {
 			if cfg.Browse {
 				if err := dirList(c, file); err != nil {
