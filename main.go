@@ -7,9 +7,9 @@ package embed
 
 import (
 	"fmt"
+	"html"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"path"
 	"sort"
@@ -18,11 +18,24 @@ import (
 	"github.com/gofiber/fiber"
 )
 
+// Config holds the configuration for the middleware
 type Config struct {
-	Root         http.FileSystem
+	// Root is a FileSystem that provides access
+	// to a collection of files and directories.
+	// Required. Default: nil
+	Root http.FileSystem
+
+	// ErrorHandler defines the response body when an error raised.
+	// Optional. Defaul: Next for NotExistError and 403 for PermissionError and 500 for others
 	ErrorHandler func(*fiber.Ctx, error)
-	Index        string
-	DirList      bool
+
+	// Index file for serving a directory.
+	// Optional. Default: "index.html"
+	Index string
+
+	// Enable directory browsing.
+	// Optional. Default: false
+	Browse bool
 }
 
 // New returns
@@ -98,7 +111,7 @@ func New(config ...Config) func(*fiber.Ctx) {
 		}
 
 		if stat.IsDir() {
-			if cfg.DirList {
+			if cfg.Browse {
 				if err := dirList(c, file); err != nil {
 					cfg.ErrorHandler(c, err)
 				}
@@ -138,37 +151,46 @@ func getFileExtension(path string) string {
 	return path[n:]
 }
 
-var htmlReplacer = strings.NewReplacer(
-	"&", "&amp;",
-	"<", "&lt;",
-	">", "&gt;",
-	// "&#34;" is shorter than "&quot;".
-	`"`, "&#34;",
-	// "&#39;" is shorter than "&apos;" and apos was not in HTML until HTML5.
-	"'", "&#39;",
-)
-
 func dirList(c *fiber.Ctx, f http.File) error {
-	dirs, err := f.Readdir(-1)
+	fileinfos, err := f.Readdir(-1)
 	if err != nil {
 		return err
 	}
-	sort.Slice(dirs, func(i, j int) bool { return dirs[i].Name() < dirs[j].Name() })
+
+	fm := make(map[string]os.FileInfo, len(fileinfos))
+	filenames := make([]string, 0, len(fileinfos))
+	for _, fi := range fileinfos {
+		name := fi.Name()
+		fm[name] = fi
+		filenames = append(filenames, name)
+	}
+
+	basePathEscaped := html.EscapeString(c.Path())
+	c.Write(fmt.Sprintf("<html><head><title>%s</title><style>.dir { font-weight: bold }</style></head><body>", basePathEscaped))
+	c.Write(fmt.Sprintf("<h1>%s</h1>", basePathEscaped))
+	c.Write(fmt.Sprintf("<ul>"))
+
+	if len(basePathEscaped) > 1 {
+		parentPathEscaped := html.EscapeString(c.Path() + "/..")
+		c.Write(fmt.Sprintf(`<li><a href="%s" class="dir">..</a></li>`, parentPathEscaped))
+	}
+
+	sort.Strings(filenames)
+	for _, name := range filenames {
+		pathEscaped := html.EscapeString(path.Join(c.Path() + "/" + name))
+		fi := fm[name]
+		auxStr := "dir"
+		className := "dir"
+		if !fi.IsDir() {
+			auxStr = fmt.Sprintf("file, %d bytes", fi.Size())
+			className = "file"
+		}
+		c.Write(fmt.Sprintf(`<li><a href="%s" class="%s">%s</a>, %s, last modified %s</li>`,
+			pathEscaped, className, html.EscapeString(name), auxStr, fi.ModTime()))
+	}
+	c.Write(fmt.Sprintf("</ul></body></html>"))
 
 	c.Type("html")
-	fmt.Fprintf(c.Fasthttp, "<pre>\n")
-	for _, d := range dirs {
-		name := d.Name()
-		if d.IsDir() {
-			name += "/"
-		}
-		// name may contain '?' or '#', which must be escaped to remain
-		// part of the URL path, and not indicate the start of a query
-		// string or fragment.
-		url := url.URL{Path: path.Join(c.Path(), "/", name)}
-		fmt.Fprintf(c.Fasthttp, "<a href=\"%s\">%s</a>\n", url.String(), htmlReplacer.Replace(name))
-	}
-	fmt.Fprintf(c.Fasthttp, "</pre>\n")
 
 	return nil
 }

@@ -20,8 +20,8 @@ func Test_Embed(t *testing.T) {
 	}))
 
 	app.Use("/dir", New(Config{
-		Root:    http.Dir("./testdata"),
-		DirList: true,
+		Root:   http.Dir("./testdata"),
+		Browse: true,
 	}))
 
 	app.Get("/", func(c *fiber.Ctx) {
