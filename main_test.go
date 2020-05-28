@@ -7,9 +7,11 @@ package embed
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/gofiber/fiber"
+	"github.com/gofiber/utils"
 )
 
 func Test_Embed(t *testing.T) {
@@ -95,22 +97,10 @@ func Test_Embed(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req, _ := http.NewRequest("GET", tt.url, nil)
-			resp, err := app.Test(req)
-			if err != nil {
-				t.Fatalf(`%s: %s`, t.Name(), err)
-			}
-
-			if resp.StatusCode != tt.statusCode {
-				t.Fatalf(`%s: StatusCode: got %v - expected %v`, t.Name(), resp.StatusCode, tt.statusCode)
-			}
-
-			if tt.contentType != "" {
-				ct := resp.Header.Get("Content-Type")
-				if ct != tt.contentType {
-					t.Fatalf(`%s: Content-Type: got %s - expected %s`, t.Name(), ct, tt.contentType)
-				}
-			}
+			resp, err := app.Test(httptest.NewRequest("GET", tt.url, nil))
+			utils.AssertEqual(t, nil, err)
+			utils.AssertEqual(t, tt.statusCode, resp.StatusCode)
+			utils.AssertEqual(t, tt.contentType, resp.Header.Get("Content-Type"))
 		})
 	}
 }

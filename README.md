@@ -1,4 +1,9 @@
-### Embed
+# Embed
+
+![Test](https://github.com/gofiber/embed/workflows/Test/badge.svg)
+![Security](https://github.com/gofiber/embed/workflows/Security/badge.svg)
+![Linter](https://github.com/gofiber/embed/workflows/Linter/badge.svg)
+
 FileServer middleware for Fiber
 
 Special thanks and credits to [Alireza Salary](https://github.com/arsmn)
