@@ -123,10 +123,16 @@ func New(config ...Config) func(*fiber.Ctx) {
 			return
 		}
 
+		modTime := stat.ModTime()
 		contentLength := int(stat.Size())
 
 		// Set Content Type header
 		c.Type(getFileExtension(stat.Name()))
+
+		// Set Last Modified header
+		if !modTime.IsZero() {
+			c.Set(fiber.HeaderLastModified, modTime.UTC().Format(http.TimeFormat))
+		}
 
 		if c.Method() == fiber.MethodGet {
 			c.Fasthttp.SetBodyStream(file, contentLength)
