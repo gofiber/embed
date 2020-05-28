@@ -1,4 +1,11 @@
-### Embed
+# Embed
+
+![Release](https://img.shields.io/github/release/gofiber/embed.svg)
+[![Discord](https://img.shields.io/badge/discord-join%20channel-7289DA)](https://gofiber.io/discord)
+![Test](https://github.com/gofiber/embed/workflows/Test/badge.svg)
+![Security](https://github.com/gofiber/embed/workflows/Security/badge.svg)
+![Linter](https://github.com/gofiber/embed/workflows/Linter/badge.svg)
+
 FileServer middleware for Fiber
 
 Special thanks and credits to [Alireza Salary](https://github.com/arsmn)
