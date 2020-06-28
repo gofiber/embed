@@ -40,7 +40,7 @@ func Test_Embed(t *testing.T) {
 			url:          "/test/index.html",
 			statusCode:   200,
 			contentType:  "text/html",
-			modifiedTime: "Thu, 07 May 2020 15:40:26 GMT",
+			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
 		},
 		{
 			name:        "Should be returns status 200 with suitable content-type",
@@ -53,14 +53,14 @@ func Test_Embed(t *testing.T) {
 			url:          "/test/test.json",
 			statusCode:   200,
 			contentType:  "application/json",
-			modifiedTime: "Tue, 21 Apr 2020 11:58:15 GMT",
+			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
 		},
 		{
 			name:         "Should be returns status 200 with suitable content-type",
 			url:          "/test/main.css",
 			statusCode:   200,
 			contentType:  "text/css",
-			modifiedTime: "Tue, 21 Apr 2020 11:34:42 GMT",
+			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
 		},
 		{
 			name:       "Should be returns status 404",
@@ -94,7 +94,7 @@ func Test_Embed(t *testing.T) {
 			url:          "/dir/inner/fiber.png",
 			statusCode:   200,
 			contentType:  "image/png",
-			modifiedTime: "Thu, 07 May 2020 14:44:24 GMT",
+			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
 		},
 	}
 
