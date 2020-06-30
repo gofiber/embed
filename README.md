@@ -136,7 +136,7 @@ import (
 )
 
 func main() {
-	statik, err := fs.New()
+  statik, err := fs.New()
   if err != nil {
     log.Fatal(err)
   }
