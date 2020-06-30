@@ -91,7 +91,6 @@ func main() {
   app := fiber.New()
 
   app.Use("/assets", embed.New(embed.Config{
-    Prefix: "/assets/",
     Root:   rice.MustFindBox("assets").HTTPBox(),
   }))
 
