@@ -127,27 +127,26 @@ func main() {
 package main
 
 import (
-	"log
+  "log"
   "github.com/gofiber/fiber"
   "github.com/gofiber/embed"
 	
-	"<Your go module>/statik"
-	"github.com/rakyll/statik/fs"
+  "<Your go module>/statik"
+  fs "github.com/rakyll/statik/fs"
 )
 
 func main() {
+	statik, err := fs.New()
+  if err != nil {
+    log.Fatal(err)
+  }
 
-	statikFS, err := fs.New()
-	if err != nil {
-		log.Fatal(err)
-	}
+  app := fiber.New()
 
-	app := fiber.New()
+  app.Use("/", embed.New(embed.Config{
+    Root: statikFS,
+  }))
 
-	app.Use("/", embed.New(embed.Config{
-		Root: statikFS,
-	}))
-
-	app.Listen(8080)
+  app.Listen(8080)
 }
 ```

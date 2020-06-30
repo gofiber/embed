@@ -36,11 +36,10 @@ func Test_Embed(t *testing.T) {
 		modifiedTime string
 	}{
 		{
-			name:         "Should be returns status 200 with suitable content-type",
-			url:          "/test/index.html",
-			statusCode:   200,
-			contentType:  "text/html",
-			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
+			name:        "Should be returns status 200 with suitable content-type",
+			url:         "/test/index.html",
+			statusCode:  200,
+			contentType: "text/html",
 		},
 		{
 			name:        "Should be returns status 200 with suitable content-type",
@@ -49,18 +48,16 @@ func Test_Embed(t *testing.T) {
 			contentType: "text/html",
 		},
 		{
-			name:         "Should be returns status 200 with suitable content-type",
-			url:          "/test/test.json",
-			statusCode:   200,
-			contentType:  "application/json",
-			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
+			name:        "Should be returns status 200 with suitable content-type",
+			url:         "/test/test.json",
+			statusCode:  200,
+			contentType: "application/json",
 		},
 		{
-			name:         "Should be returns status 200 with suitable content-type",
-			url:          "/test/main.css",
-			statusCode:   200,
-			contentType:  "text/css",
-			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
+			name:        "Should be returns status 200 with suitable content-type",
+			url:         "/test/main.css",
+			statusCode:  200,
+			contentType: "text/css",
 		},
 		{
 			name:       "Should be returns status 404",
@@ -90,11 +87,10 @@ func Test_Embed(t *testing.T) {
 			contentType: "text/html",
 		},
 		{
-			name:         "Should be returns status 200",
-			url:          "/dir/inner/fiber.png",
-			statusCode:   200,
-			contentType:  "image/png",
-			modifiedTime: "Thu, 28 May 2020 19:54:23 GMT",
+			name:        "Should be returns status 200",
+			url:         "/dir/inner/fiber.png",
+			statusCode:  200,
+			contentType: "image/png",
 		},
 	}
 
@@ -114,13 +110,6 @@ func Test_Embed(t *testing.T) {
 				ct := resp.Header.Get("Content-Type")
 				if ct != tt.contentType {
 					t.Fatalf(`%s: Content-Type: got %s - expected %s`, t.Name(), ct, tt.contentType)
-				}
-			}
-
-			if tt.modifiedTime != "" {
-				lm := resp.Header.Get("Last-Modified")
-				if lm != tt.modifiedTime {
-					t.Fatalf(`%s: Last-Modified: got %s - expected %s`, t.Name(), lm, tt.modifiedTime)
 				}
 			}
 		})
