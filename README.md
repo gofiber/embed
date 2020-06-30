@@ -120,3 +120,33 @@ func main() {
   app.Listen(8080)
 }
 ```
+
+### statik
+
+```go
+package main
+
+import (
+  "log"
+  "github.com/gofiber/fiber"
+  "github.com/gofiber/embed"
+	
+  "<Your go module>/statik"
+  fs "github.com/rakyll/statik/fs"
+)
+
+func main() {
+  statik, err := fs.New()
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  app := fiber.New()
+
+  app.Use("/", embed.New(embed.Config{
+    Root: statikFS,
+  }))
+
+  app.Listen(8080)
+}
+```
